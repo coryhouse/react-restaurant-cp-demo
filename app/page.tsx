@@ -5,46 +5,20 @@ interface MenuItem {
   description: string;
 }
 
-const mockMenuItems: MenuItem[] = [
-  {
-    id: 1,
-    name: "Classic Burger",
-    price: 12.99,
-    description: "Juicy beef patty with lettuce, tomato, and our special sauce"
-  },
-  {
-    id: 2,
-    name: "Margherita Pizza",
-    price: 14.99,
-    description: "Fresh mozzarella, tomatoes, and basil on our homemade crust"
-  },
-  {
-    id: 3,
-    name: "Caesar Salad",
-    price: 9.99,
-    description: "Crisp romaine lettuce with parmesan and croutons"
-  },
-  {
-    id: 4,
-    name: "Grilled Salmon",
-    price: 18.99,
-    description: "Atlantic salmon with roasted vegetables and lemon butter"
-  },
-  {
-    id: 5,
-    name: "Chicken Tacos",
-    price: 11.99,
-    description: "Three soft tacos with seasoned chicken, salsa, and avocado"
-  },
-  {
-    id: 6,
-    name: "Pasta Carbonara",
-    price: 13.99,
-    description: "Creamy pasta with bacon, parmesan, and fresh herbs"
-  }
-];
+async function getMenuItems(): Promise<MenuItem[]> {
+  const response = await fetch('http://localhost:3000/api/food', {
+    cache: 'no-store'
+  });
 
-export default function Home() {
+  if (!response.ok) {
+    throw new Error('Failed to fetch menu items');
+  }
+
+  return response.json();
+}
+
+export default async function Home() {
+  const menuItems = await getMenuItems();
   return (
     <div className="min-h-screen bg-background p-6">
       <div className="max-w-7xl mx-auto">
@@ -54,7 +28,7 @@ export default function Home() {
         </header>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {mockMenuItems.map((item) => (
+          {menuItems.map((item) => (
             <div
               key={item.id}
               className="bg-gray-100 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow"
