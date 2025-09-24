@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import Link from 'next/link';
 import MenuSearch from './components/MenuSearch';
 
 const MenuItemSchema = z.object({
@@ -32,8 +33,18 @@ export default async function Home() {
     <div className="min-h-screen bg-background p-6">
       <div className="max-w-7xl mx-auto">
         <header className="mb-8">
-          <h1 className="text-4xl font-bold text-foreground mb-2">Restaurant Menu</h1>
-          <p className="text-foreground/70">Discover our delicious offerings</p>
+          <div className="flex justify-between items-center mb-4">
+            <div>
+              <h1 className="text-4xl font-bold text-foreground mb-2">Restaurant Menu</h1>
+              <p className="text-foreground/70">Discover our delicious offerings</p>
+            </div>
+            <Link
+              href="/admin"
+              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors font-medium"
+            >
+              Admin
+            </Link>
+          </div>
         </header>
 
         <MenuSearch menuItems={menuItems} />
