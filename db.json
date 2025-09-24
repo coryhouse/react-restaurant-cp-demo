@@ -1,4 +1,24 @@
 {
+  "ratings": [
+    {
+      "id": 1,
+      "menuItemId": 2,
+      "rating": 5,
+      "comment": "Absolutely delicious! The crust was perfect."
+    },
+    {
+      "id": 2,
+      "menuItemId": 1,
+      "rating": 4,
+      "comment": "Great burger, but could use a bit more sauce."
+    },
+    {
+      "id": 3,
+      "menuItemId": 3,
+      "rating": 3,
+      "comment": "Salad was fresh, but the dressing was a bit bland."
+    }
+  ],
   "menuItems": [
     {
       "id": 1,
