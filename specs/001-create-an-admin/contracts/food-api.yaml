@@ -1,0 +1,252 @@
+openapi: 3.0.0
+info:
+  title: Food Management API
+  version: 1.0.0
+  description: API for managing restaurant menu items in admin interface
+
+paths:
+  /api/food:
+    get:
+      summary: List all food items
+      operationId: listFoodItems
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FoodItem'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    post:
+      summary: Create a new food item
+      operationId: createFoodItem
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FoodItemInput'
+      responses:
+        '201':
+          description: Food item created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FoodItem'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/food/{id}:
+    get:
+      summary: Get a specific food item
+      operationId: getFoodItem
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FoodItem'
+        '404':
+          description: Food item not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    put:
+      summary: Update a food item
+      operationId: updateFoodItem
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FoodItem'
+      responses:
+        '200':
+          description: Food item updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FoodItem'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+        '404':
+          description: Food item not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    delete:
+      summary: Delete a food item
+      operationId: deleteFoodItem
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Food item deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Food item deleted successfully"
+                  id:
+                    type: string
+        '404':
+          description: Food item not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  schemas:
+    FoodItem:
+      type: object
+      required:
+        - id
+        - name
+        - description
+        - price
+        - category
+        - imageUrl
+        - isAvailable
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the food item
+        name:
+          type: string
+          maxLength: 100
+          description: Display name of the food item
+        description:
+          type: string
+          maxLength: 500
+          description: Detailed description of the food item
+        price:
+          type: number
+          minimum: 0
+          multipleOf: 0.01
+          description: Price in dollars
+        category:
+          type: string
+          enum: [appetizer, entree, dessert, beverage, side]
+          description: Food category
+        imageUrl:
+          type: string
+          format: uri
+          description: URL to food item image
+        isAvailable:
+          type: boolean
+          description: Whether item is currently available for ordering
+
+    FoodItemInput:
+      type: object
+      required:
+        - name
+        - description
+        - price
+        - category
+        - imageUrl
+      properties:
+        name:
+          type: string
+          maxLength: 100
+          description: Display name of the food item
+        description:
+          type: string
+          maxLength: 500
+          description: Detailed description of the food item
+        price:
+          type: number
+          minimum: 0
+          multipleOf: 0.01
+          description: Price in dollars
+        category:
+          type: string
+          enum: [appetizer, entree, dessert, beverage, side]
+          description: Food category
+        imageUrl:
+          type: string
+          format: uri
+          description: URL to food item image
+        isAvailable:
+          type: boolean
+          default: true
+          description: Whether item is currently available for ordering
+
+    Error:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+          description: Error message
+        code:
+          type: string
+          description: Error code
+
+    ValidationError:
+      type: object
+      required:
+        - message
+        - errors
+      properties:
+        message:
+          type: string
+          description: General validation error message
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+                description: Field that failed validation
+              message:
+                type: string
+                description: Specific validation error message
