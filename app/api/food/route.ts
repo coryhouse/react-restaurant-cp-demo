@@ -1,3 +1,5 @@
+import { MenuItemSchema, transformToMenuItem } from '../../../lib/validation/menuItem';
+
 export interface MenuItem {
   id: number;
   name: string;
@@ -29,6 +31,55 @@ export async function GET(request: Request) {
     const data: MenuItem[] = await res.json();
     return Response.json(data, { status: 200 });
   } catch (err) {
+    return Response.json({ error: (err as Error).message }, { status: 500 });
+  }
+}
+
+// Create new menu item
+export async function POST(request: Request) {
+  try {
+    const body = await request.json();
+
+    // Validate request body using Zod schema
+    const validationResult = MenuItemSchema.safeParse(body);
+    if (!validationResult.success) {
+      const details: Record<string, string> = {};
+      validationResult.error.issues.forEach(issue => {
+        const path = issue.path.join('.');
+        details[path] = issue.message;
+      });
+
+      return Response.json({
+        error: 'Validation failed',
+        message: 'Invalid input data',
+        details
+      }, { status: 400 });
+    }
+
+    // Transform validated data to MenuItem format
+    const menuItemData = transformToMenuItem(validationResult.data);
+
+    // Forward to json-server
+    const origin = process.env.JSON_SERVER_ORIGIN ?? "http://localhost:3001";
+    const res = await fetch(`${origin}/menuItems`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(menuItemData),
+    });
+
+    if (!res.ok) {
+      return Response.json({ error: "Failed to create item" }, { status: res.status });
+    }
+
+    const createdItem: MenuItem = await res.json();
+    return Response.json(createdItem, { status: 201 });
+
+  } catch (err) {
+    if (err instanceof SyntaxError) {
+      return Response.json({ error: "Invalid JSON format" }, { status: 400 });
+    }
     return Response.json({ error: (err as Error).message }, { status: 500 });
   }
 }
