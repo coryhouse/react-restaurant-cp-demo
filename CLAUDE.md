@@ -12,6 +12,12 @@ npm run dev
 ```
 Opens on http://localhost:3000 with hot reload
 
+**Mock API server (json-server):**
+```bash
+npm run mock
+```
+Serves mock data from `db.json` at http://localhost:3001. Primary resource: `/menuItems`.
+
 **Build:**
 ```bash
 npm run build
@@ -26,6 +32,18 @@ npm run start
 ```bash
 npm run lint
 ```
+
+## Mock data and API
+
+- Mock data lives in `db.json` and `json-server` serves it on port 3001.
+- The Next.js route at `/api/food` proxies to `json-server` so the UI can call a stable internal route.
+- You can customize the json-server origin by setting `JSON_SERVER_ORIGIN` (defaults to `http://localhost:3001`).
+
+Examples:
+
+- Fetch all: `GET http://localhost:3000/api/food`
+- Full-text search: `GET http://localhost:3000/api/food?q=burger`
+- Name filter: `GET http://localhost:3000/api/food?name_like=Pizza`
 
 ## Architecture
 
@@ -61,3 +79,11 @@ app/
 - Path alias `@/*` points to project root
 - Next.js TypeScript plugin enabled
 - React 19 types included
+- Validate runtime data via Zod, and infer types with `z.infer<>`
+
+### React coding style
+- Prefer RSC when possible
+- Prefer one component per file
+
+### Accessibility
+- Use the URL for sharable state such as filter, sort, and pagination

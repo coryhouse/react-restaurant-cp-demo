@@ -1,9 +1,16 @@
-interface MenuItem {
-  id: number;
-  name: string;
-  price: number;
-  description: string;
-}
+import { z } from 'zod';
+import MenuSearch from './components/MenuSearch';
+
+const MenuItemSchema = z.object({
+  id: z.number(),
+  name: z.string(),
+  price: z.number(),
+  description: z.string(),
+});
+
+const MenuItemsSchema = z.array(MenuItemSchema);
+
+type MenuItem = z.infer<typeof MenuItemSchema>;
 
 async function getMenuItems(): Promise<MenuItem[]> {
   const response = await fetch('http://localhost:3000/api/food', {
@@ -14,11 +21,13 @@ async function getMenuItems(): Promise<MenuItem[]> {
     throw new Error('Failed to fetch menu items');
   }
 
-  return response.json();
+  const data = await response.json();
+  return MenuItemsSchema.parse(data);
 }
 
 export default async function Home() {
   const menuItems = await getMenuItems();
+
   return (
     <div className="min-h-screen bg-background p-6">
       <div className="max-w-7xl mx-auto">
@@ -27,20 +36,7 @@ export default async function Home() {
           <p className="text-foreground/70">Discover our delicious offerings</p>
         </header>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {menuItems.map((item) => (
-            <div
-              key={item.id}
-              className="bg-gray-100 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow"
-            >
-              <div className="flex justify-between items-start mb-3">
-                <h3 className="text-xl font-semibold text-foreground">{item.name}</h3>
-                <span className="text-lg font-bold text-foreground">${item.price}</span>
-              </div>
-              <p className="text-foreground/70 text-sm leading-relaxed">{item.description}</p>
-            </div>
-          ))}
-        </div>
+        <MenuSearch menuItems={menuItems} />
       </div>
     </div>
   );
