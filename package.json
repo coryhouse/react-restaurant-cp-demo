@@ -3,11 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev:app": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "mock": "json-server --watch db.json --port 3001 --delay 1000"
+    "mock": "json-server --watch db.json --port 3001 --delay 1000",
+    "dev": "concurrently npm:mock npm:dev:app"
   },
   "dependencies": {
     "next": "15.5.4",
@@ -17,10 +18,12 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@playwright/test": "^1.55.1",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "concurrently": "^9.2.1",
     "eslint": "^9",
     "eslint-config-next": "15.5.4",
     "json-server": "^0.17.4",
