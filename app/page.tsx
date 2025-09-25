@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import MenuSearch from './components/MenuSearch';
 
-const MenuItemSchema = z.object({
+export const MenuItemSchema = z.object({
   id: z.number(),
   name: z.string(),
   price: z.number(),
